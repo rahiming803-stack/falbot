@@ -116,7 +116,7 @@ async def check_membership(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     is_member = await check_membership(user_id, context)
-    
+
     if not is_member:
         keyboard = [[InlineKeyboardButton("🌙 عضویت در کانال", url="https://t.me/destinyoracle")]]
         await update.message.reply_text(
@@ -124,7 +124,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return
-        async def check_join_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    context.user_data.clear()
+    await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())
+    await update.message.reply_text(WELCOME_TEXT, reply_markup=build_main_menu())
+
+
+async def check_join_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     user_id = update.effective_user.id
     is_member = await check_membership(user_id, context)
@@ -138,13 +144,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.delete()
     await context.bot.send_message(chat_id=query.message.chat_id, text=INTRO_TEXT, reply_markup=build_persistent_menu())
     await context.bot.send_message(chat_id=query.message.chat_id, text=WELCOME_TEXT, reply_markup=build_main_menu())
-    
-    context.user_data.clear()
-    await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())
-    await update.message.reply_text(WELCOME_TEXT, reply_markup=build_main_menu())
-    context.user_data.clear()
-    await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())
-    await update.message.reply_text(WELCOME_TEXT, reply_markup=build_main_menu())
 
 
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):

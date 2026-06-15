@@ -107,10 +107,13 @@ def ordinal_fa(n):
 # ---------- هندلرهای اصلی ----------
 
 async def check_membership(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    if user_id == ADMIN_ID:
+        return True
     try:
         member = await context.bot.get_chat_member("@destinyoracle", user_id)
         return member.status in ["member", "administrator", "creator"]
-    except:
+    except Exception as e:
+        logging.warning(f"Membership check failed for {user_id}: {e}")
         return False
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):

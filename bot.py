@@ -124,7 +124,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return
+        async def check_join_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    user_id = update.effective_user.id
+    is_member = await check_membership(user_id, context)
+
+    if not is_member:
+        await query.answer("⛔️ هنوز در کانال عضو نشده‌اید!", show_alert=True)
+        return
+
+    await query.answer("✅ خوش آمدید!")
+    context.user_data.clear()
+    await query.message.delete()
+    await context.bot.send_message(chat_id=query.message.chat_id, text=INTRO_TEXT, reply_markup=build_persistent_menu())
+    await context.bot.send_message(chat_id=query.message.chat_id, text=WELCOME_TEXT, reply_markup=build_main_menu())
     
+    context.user_data.clear()
+    await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())
+    await update.message.reply_text(WELCOME_TEXT, reply_markup=build_main_menu())
     context.user_data.clear()
     await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())
     await update.message.reply_text(WELCOME_TEXT, reply_markup=build_main_menu())

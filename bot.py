@@ -121,12 +121,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     is_member = await check_membership(user_id, context)
 
     if not is_member:
-        keyboard = [[InlineKeyboardButton("🌙 عضویت در کانال", url="https://t.me/destinyoracle")]]
-        await update.message.reply_text(
-            "⚠️ برای استفاده از ربات ابتدا باید در کانال ما عضو شوید 👇",
-            reply_markup=InlineKeyboardMarkup(keyboard),
-        )
-        return
+    keyboard = [
+        [InlineKeyboardButton("🌙 عضویت در کانال", url="https://t.me/destinyoracle")],
+        [InlineKeyboardButton("✅ عضو شدم، شروع کن!", callback_data="check_join")],
+    ]
+    await update.message.reply_text(
+        "⚠️ برای استفاده از ربات ابتدا باید در کانال ما عضو شوید 👇",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+    )
+    return
 
     context.user_data.clear()
     await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())

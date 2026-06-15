@@ -580,6 +580,7 @@ def main():
         filters.TEXT & ~filters.COMMAND,
         contact_info_received
     ))
+    app.add_handler(CallbackQueryHandler(check_join_callback, pattern="^check_join$"))
 
     print("🤖 ربات فال در حال اجراست...")
     app.run_polling(drop_pending_updates=True)

@@ -106,14 +106,27 @@ def ordinal_fa(n):
 
 # ---------- هندلرهای اصلی ----------
 
+async def check_membership(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    try:
+        member = await context.bot.get_chat_member("@destinyoracle", user_id)
+        return member.status in ["member", "administrator", "creator"]
+    except:
+        return False
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    is_member = await check_membership(user_id, context)
+    
+    if not is_member:
+        keyboard = [[InlineKeyboardButton("🌙 عضویت در کانال", url="https://t.me/destinyoracle")]]
+        await update.message.reply_text(
+            "⚠️ برای استفاده از ربات ابتدا باید در کانال ما عضو شوید 👇",
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
+        return
+    
     context.user_data.clear()
-    # اول منوی پایین رو نشون بده
-    await update.message.reply_text(
-        INTRO_TEXT,
-        reply_markup=build_persistent_menu()
-    )
-    # بعد منوی اصلی رو بفرست
+    await update.message.reply_text(INTRO_TEXT, reply_markup=build_persistent_menu())
     await update.message.reply_text(WELCOME_TEXT, reply_markup=build_main_menu())
 
 
